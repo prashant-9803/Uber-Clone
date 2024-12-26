@@ -19,17 +19,15 @@ router.post(
 );
 
 router.post("/login", [
-    body("email").isEmail().withMessage("Invalid email"),
-    body("password")
-      .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters long"),
-    userController.loginUser
-])
+  body("email").isEmail().withMessage("Invalid email"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+  userController.loginUser,
+]);
 
-router.get("/profile",authMiddleware.authUser, userController.getUserProfile)
+router.get("/profile", authMiddleware.authUser, userController.getUserProfile);
 
-
-router.get("/logout", authMiddleware.authUser, userController.logoutUser)
-
+router.get("/logout", authMiddleware.authUser, userController.logoutUser);
 
 module.exports = router;

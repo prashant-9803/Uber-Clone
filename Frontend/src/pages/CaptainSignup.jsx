@@ -1,40 +1,67 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CaptainDataContext } from "../context/CaptainContext";
+import UserContext from "../context/UserContext";
+import axios from "axios";
+
 
 const CaptainSignup = () => {
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [userData, setUserData] = useState({});
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-  const submitHandler = (e) => {
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [vehicleCapacity, setVehicleCapacity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
 
-    setUserData({
-      fullName: {
-        firstName: firstName,
-        lastName: lastName
+    const captainData = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
       },
       email: email,
       password: password,
-    });
-    console.log(userData);
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: vehicleCapacity,
+        vehicleType: vehicleType,
+      },
+    };
+
+    const response = await axios.post(`${import .meta.env.VITE_BASE_URL}/captains/register`, captainData);
+
+    if(response.status === 201){
+      const data = response.data;
+      setCaptain(data.captain);
+      localStorage.setItem("token", data.token);
+      navigate("/captain-home")
+    }
 
     setEmail("");
     setPassword("");
-    setFirstName("")
-    setLastName("")
+    setFirstName("");
+    setLastName("");
+    setVehicleColor("");
+    setVehiclePlate("");
+    setVehicleCapacity("");
+    setVehicleType("");
   };
-
 
   return (
     <div className="p-7 flex flex-col justify-between h-screen ">
       <div className=" tracking-tight">
         <img
-          className="w-16 mb-10"
+          className="w-16 mb-6"
           src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
           alt=""
         />
@@ -44,7 +71,7 @@ const CaptainSignup = () => {
             submitHandler(e);
           }}
         >
-          <h3 className="text-lg mb-2 ">What's your Name</h3>
+          <h3 className="text-base mb-2 ">What's your Name</h3>
           <div className="flex gap-5">
             <input
               type="text"
@@ -65,7 +92,7 @@ const CaptainSignup = () => {
             />
           </div>
 
-          <h3 className="text-lg mb-2 ">What's your email</h3>
+          <h3 className="text-base mb-2 ">What's your email</h3>
           <input
             type="email"
             required
@@ -75,7 +102,7 @@ const CaptainSignup = () => {
             placeholder="email@example.com"
           />
 
-          <h3 className="text-lg mb-2">Enter Password</h3>
+          <h3 className="text-base mb-2">Enter Password</h3>
           <input
             type="password"
             value={password}
@@ -85,8 +112,59 @@ const CaptainSignup = () => {
             placeholder="Password"
           />
 
-          <button className="bg-[#111] hover:bg-gray-800 duration-300 text-white font-semibold mb-3 px-4 py-2 rounded w-full  tracking-tight">
-            Create Account
+          <h3 className="text-base font-medium mb-2">Vehicle Information</h3>
+          <div className="flex gap-4 mb-7">
+            <input
+              required
+              className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-base placeholder:text-base"
+              type="text"
+              placeholder="Vehicle Color"
+              value={vehicleColor}
+              onChange={(e) => {
+                setVehicleColor(e.target.value);
+              }}
+            />
+            <input
+              required
+              className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-base placeholder:text-base"
+              type="text"
+              placeholder="Vehicle Plate"
+              value={vehiclePlate}
+              onChange={(e) => {
+                setVehiclePlate(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex gap-4 mb-7">
+            <input
+              required
+              className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-base placeholder:text-base"
+              type="number"
+              placeholder="Vehicle Capacity"
+              value={vehicleCapacity}
+              onChange={(e) => {
+                setVehicleCapacity(e.target.value);
+              }}
+            />
+            <select
+              required
+              className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-base placeholder:text-base"
+              value={vehicleType}
+              onChange={(e) => {
+                setVehicleType(e.target.value);
+              }}
+            >
+              <option value="" disabled>
+                Select Vehicle Type
+              </option>
+              <option value="car">Car</option>
+              <option value="auto">Auto</option>
+              <option value="motorcycle">Motorcycle</option>
+            </select>
+          </div>
+
+          <button className="bg-[#111] text-white mb-3 rounded-lg px-4 py-2 w-full text-base placeholder:text-base">
+            Create Captain Account
           </button>
 
           <p className="text-center text-sm mb-3 text-gray-400 font-light">
@@ -99,7 +177,11 @@ const CaptainSignup = () => {
       </div>
 
       <div>
-        <p className="text-xs opacity-50">This site is protected by reCAPTCHA and the <span className="underline"> Google Privacy Policy</span> and Terms of Service apply.</p>
+        <p className="text-xs opacity-50">
+          This site is protected by reCAPTCHA and the{" "}
+          <span className="underline"> Google Privacy Policy</span> and Terms of
+          Service apply.
+        </p>
       </div>
     </div>
   );

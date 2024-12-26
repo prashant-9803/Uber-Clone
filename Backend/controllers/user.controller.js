@@ -92,3 +92,4 @@ module.exports.logoutUser = async (req, res, next) => {
         message: "Logged out successfully",
     });
 }
+
