@@ -112,7 +112,7 @@ const CaptainSignup = () => {
             placeholder="Password"
           />
 
-          <h3 className="text-base font-medium mb-2">Vehicle Information</h3>
+          <h3 className="text-base mb-2">Vehicle Information</h3>
           <div className="flex gap-4 mb-7">
             <input
               required
@@ -148,14 +148,14 @@ const CaptainSignup = () => {
             />
             <select
               required
-              className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-base placeholder:text-base"
+              className="bg-[#eeeeee] w-1/2 rounded-lg px-3 py-2 border text-base placeholder:text-base"
               value={vehicleType}
               onChange={(e) => {
                 setVehicleType(e.target.value);
               }}
             >
               <option value="" disabled>
-                Select Vehicle Type
+                Select Vehicle
               </option>
               <option value="car">Car</option>
               <option value="auto">Auto</option>

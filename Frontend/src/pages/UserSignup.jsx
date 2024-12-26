@@ -56,7 +56,7 @@ const UserSignup = () => {
             submitHandler(e);
           }}
         >
-          <h3 className="text-lg mb-2 ">What's your Name</h3>
+          <h3 className="text-base mb-2 ">What's your Name</h3>
           <div className="flex gap-5">
             <input
               type="text"
@@ -77,7 +77,7 @@ const UserSignup = () => {
             />
           </div>
 
-          <h3 className="text-lg mb-2 ">What's your email</h3>
+          <h3 className="text-base mb-2 ">What's your email</h3>
           <input
             type="email"
             required
@@ -87,7 +87,7 @@ const UserSignup = () => {
             placeholder="email@example.com"
           />
 
-          <h3 className="text-lg mb-2">Enter Password</h3>
+          <h3 className="text-base mb-2">Enter Password</h3>
           <input
             type="password"
             value={password}
