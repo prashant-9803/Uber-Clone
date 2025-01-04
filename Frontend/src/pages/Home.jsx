@@ -1,4 +1,10 @@
-import React, { useRef, useState, useNavigate, useContext } from "react";
+import React, {
+  useRef,
+  useState,
+  useContext,
+  useEffect,
+} from "react";
+import { UserDataContext } from "../context/UserContext";
 import uberLogo from "../assets/images/uber logo.png";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -9,6 +15,10 @@ import ConfirmRide from "../components/ConfirmRide";
 import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
 import axios from "axios";
+import { SocketContext } from "../context/SocketContext";
+import { useNavigate } from "react-router-dom";
+import LiveTracking from "../components/LiveTracking";
+
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -18,7 +28,6 @@ const Home = () => {
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
   const [vehicleFound, setVehicleFound] = useState(false);
   const [waitingForDriver, setWaitingForDriver] = useState(false);
-
   const [pickupSuggestions, setPickupSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [activeField, setActiveField] = useState(null);
@@ -26,13 +35,33 @@ const Home = () => {
   const [vehicleType, setVehicleType] = useState("");
   const [ride, setRide] = useState(null);
 
+  const navigate = useNavigate()
+
   const panelRef = useRef(null);
   const vehiclePanelRef = useRef(null);
   const panelCloseRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
   const vehicleFoundRef = useRef(null);
   const waitingForDriverRef = useRef(null);
-  
+
+  const { socket } = useContext(SocketContext);
+  const { user } = useContext(UserDataContext);
+
+  useEffect(() => {
+    socket.emit("join", { userType: "user", userId: user._id });
+  }, [user]);
+
+  socket.on("ride-confirmed", (ride) => {
+    setVehicleFound(false);
+    setWaitingForDriver(true);
+    setRide(ride);
+  });
+
+  socket.on("ride-started", (ride) => {
+    console.log("ride");
+    setWaitingForDriver(false);
+    navigate("/riding", { state: { ride } });
+  });
 
   const handlePickupChange = async (e) => {
     setPickup(e.target.value);
@@ -88,7 +117,7 @@ const Home = () => {
   }
 
   async function createRide() {
-    console.log("vehicle type : ", vehicleType)
+    console.log("vehicle type : ", vehicleType);
 
     const response = await axios.post(
       `${import.meta.env.VITE_BASE_URL}/rides/create`,
@@ -101,9 +130,10 @@ const Home = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      })
+      }
+    );
 
-      console.log(response.data)
+    console.log(response.data);
   }
 
   const submitHandler = (e) => {
@@ -201,10 +231,11 @@ const Home = () => {
 
       {/* map */}
       <div className="h-screen w-screen">
-        <img
+        {/* <img
           className="h-full w-full object-cover"
           src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*gwMx05pqII5hbfmX.gif"
-        ></img>
+        ></img> */}
+        <LiveTracking/>
       </div>
 
       {/* location search panel */}
@@ -309,19 +340,23 @@ const Home = () => {
         ref={vehicleFoundRef}
         className="fixed z-10 w-full bottom-0 p-3 bg-white rounded-t-2xl translate-y-full"
       >
-        <LookingForDriver 
+        <LookingForDriver
           pickup={pickup}
           destination={destination}
           fare={fare}
           vehicleType={vehicleType}
-          setVehicleFound={setVehicleFound} />
+          setVehicleFound={setVehicleFound}
+        />
       </div>
 
       <div
         ref={waitingForDriverRef}
         className="fixed z-10 w-full bottom-0 p-3 bg-white rounded-t-2xl "
       >
-        <WaitingForDriver setWaitingForDriver={setWaitingForDriver} />
+        <WaitingForDriver
+          ride={ride}
+          setWaitingForDriver={setWaitingForDriver}
+        />
       </div>
     </div>
   );

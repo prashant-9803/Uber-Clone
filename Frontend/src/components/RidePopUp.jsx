@@ -22,7 +22,7 @@ const RidePopUp = (props) => {
             className="h-11 w-11 rounded-full object-cover"
             src="https://preview.redd.it/created-random-people-using-chatgpt-midjourney-do-you-know-v0-q1aa450i5dqb1.png?width=1024&format=png&auto=webp&s=c4e9abc47d193474a2fa1a7e337d9d9340dce947"
           />
-          <h2>Prashant Mahamuni</h2>
+          <h2 className="capitalize">{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
         </div>
 
         <h5 className="font-medium">2.2 KM</h5>
@@ -36,27 +36,27 @@ const RidePopUp = (props) => {
           <div className="flex items-center gap-5 pb-2 border-b">
             <i className="ri-map-pin-user-fill text-lg"></i>{" "}
             <div>
-              <h3 className="text-base">24B, Near Kapoor's Cafe</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="text-base">{props.ride?.pickup}</h3>
+              {/* <p className="text-sm text-gray-500">
                 Sheriyans Coding School, Bhopal
-              </p>
+              </p> */}
             </div>
           </div>
           {/* destination */}
           <div className="flex items-center gap-5 pb-2 border-b">
             <i className="ri-map-pin-2-fill text-lg"></i>{" "}
             <div>
-              <h3 className="text-base">101A, Infinity Tower</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="text-base">{props.ride?.destination}</h3>
+              {/* <p className="text-sm text-gray-500">
                 Opposite City Park, Mumbai
-              </p>
+              </p> */}
             </div>
           </div>{" "}
           {/* payment */}
           <div className="flex items-center gap-5 pb-2 border-b">
             <i className="ri-cash-fill text-lg"></i>
             <div>
-              <h3 className="text-base">₹169.69</h3>
+              <h3 className="text-base">₹{props.ride?.fare}</h3>
               <p className="text-sm text-gray-500">Cash</p>
             </div>
           </div>
@@ -66,6 +66,7 @@ const RidePopUp = (props) => {
           <button
           onClick={() => {
             props.setConfirmRidePopUpPanel(true);
+            props.confirmRide()
           }}
           className="w-full  bg-black rounded-lg text-white text-base tracking-tighter px-8 py-2"
         >

@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import uberCar from "../assets/images/uber-car.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/SocketContext";
+import LiveTracking from "./LiveTracking";
+
 
 const Riding = () => {
+
+  const location = useLocation()
+    const { ride } = location.state || {} 
+    const { socket } = useContext(SocketContext)
+    const navigate = useNavigate()
+
+    socket.on("ride-ended", () => {
+        navigate('/home')
+    })
+
   return (
     <div className="h-screen ">
       <Link to={"/home"}>
@@ -13,10 +26,11 @@ const Riding = () => {
 
       {/* map */}
       <div className="h-1/2 w-screen">
-        <img
+        {/* <img
           className="h-full w-full object-cover"
           src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*gwMx05pqII5hbfmX.gif"
-        ></img>
+        ></img> */}
+        <LiveTracking/>
       </div>
 
       {/* ride details */}
@@ -25,11 +39,11 @@ const Riding = () => {
           <div className="flex items-center justify-between  w-full text-right mb-4">
             <img className=" h-20" src={uberCar}></img>
             <div>
-              <h2 className="text-base tracking-tighter">Sarthak Sharma</h2>
-              <h4 className="text-lg font-medium tracking-tighter">
-                MP 04 AB 1234
+              <h2 className="text-base capitalize">{ride?.user.fullname.firstname + " " + ride?.user.fullname.lastname}</h2>
+              <h4 className="text-lg font-medium uppercase">
+              {ride?.captain?.vehicle.plate}
               </h4>
-              <p className="text-sm text-gray-500 -mt-1">Swift Desire</p>
+              <p className="text-sm text-gray-500 -mt-1 capitalize">{ride?.captain?.vehicle.vehicleType}</p>
             </div>
           </div>
 
@@ -38,27 +52,27 @@ const Riding = () => {
             <div className="flex items-center gap-5 pb-2 border-b">
               <i class="ri-map-pin-user-fill text-lg"></i>{" "}
               <div>
-                <h3 className="text-base">24B, Near Kapoor's Cafe</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-base">{ride?.pickup}</h3>
+                {/* <p className="text-sm text-gray-500">
                   Sheriyans Coding School, Bhopal
-                </p>
+                </p> */}
               </div>
             </div>
             {/* destination */}
             <div className="flex items-center gap-5 pb-2 border-b">
               <i class="ri-map-pin-2-fill text-lg"></i>{" "}
               <div>
-                <h3 className="text-base">101A, Infinity Tower</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-base">{ride?.destination}</h3>
+                {/* <p className="text-sm text-gray-500">
                   Opposite City Park, Mumbai
-                </p>
+                </p> */}
               </div>
             </div>{" "}
             {/* payment */}
             <div className="flex items-center gap-5 pb-2 border-b">
               <i class="ri-cash-fill text-lg"></i>
               <div>
-                <h3 className="text-base">₹169.69</h3>
+                <h3 className="text-base">₹{ride?.fare}</h3>
                 <p className="text-sm text-gray-500">Cash</p>
               </div>
             </div>

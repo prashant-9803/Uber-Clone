@@ -1,12 +1,19 @@
 import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import uberLogo from "../assets/images/uber logo.png";
 import FinishRide from "../components/FinishRide";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import LiveTracking from "../components/LiveTracking";
 
-const CaptainRiding = (props) => {
+
+const CaptainRiding = () => {
   const [finishRidePanel, setFinishRidePanel] = useState(false);
+
+    const location = useLocation()
+    const rideData = location.state?.ride
+
+    console.log("rideData: ", rideData)
 
   const finishRidePanelRef = useRef(null);
 
@@ -38,10 +45,11 @@ const CaptainRiding = (props) => {
 
       {/* map */}
       <div className="h-5/6 w-screen">
-        <img
+        {/* <img
           className="h-full w-full object-cover"
           src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*gwMx05pqII5hbfmX.gif"
-        ></img>
+        ></img> */}
+        <LiveTracking />
       </div>
 
       {/* captain details */}
@@ -66,7 +74,7 @@ const CaptainRiding = (props) => {
           ref={finishRidePanelRef}
           className="fixed z-10 w-full bottom-0 p-3 bg-white rounded-t-2xl translate-y-full"
         >
-          <FinishRide setFinishRidePanel={setFinishRidePanel} />
+          <FinishRide ride={rideData} setFinishRidePanel={setFinishRidePanel} />
         </div>
       </div>
     </div>

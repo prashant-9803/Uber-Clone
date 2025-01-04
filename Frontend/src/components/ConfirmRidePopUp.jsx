@@ -1,12 +1,36 @@
 import React, { useState } from "react";
 import uberCar from "../assets/images/uber-car.png";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const ConfirmRidePopUp = (props) => {
-  const [OTP, setOTP] = useState("");
 
-  const submitHandler = (e) => {
+  const [OTP, setOTP] = useState("");
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
     e.preventDefault();
+
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/rides/start-ride`,
+      {
+        params: {
+          rideId: props.ride._id,
+          otp: OTP,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      props.setConfirmRidePopUpPanel(false);
+      props.setRidePopUpPanel(false);
+      navigate("/captain-riding", { state: { ride: props.ride } });
+    }
   };
 
   return (
@@ -30,10 +54,14 @@ const ConfirmRidePopUp = (props) => {
               className="h-11 w-11 rounded-full object-cover"
               src="https://preview.redd.it/created-random-people-using-chatgpt-midjourney-do-you-know-v0-q1aa450i5dqb1.png?width=1024&format=png&auto=webp&s=c4e9abc47d193474a2fa1a7e337d9d9340dce947"
             />
-            <h2>Prashant Mahamuni</h2>
+            <h2 className="capitalize">
+              {props.ride?.user.fullname.firstname +
+                " " +
+                props.ride?.user.fullname.lastname}
+            </h2>
           </div>
 
-          <h5 className="font-medium">2.2 KM</h5>
+          {/* <h5 className="font-medium">2.2 KM</h5> */}
         </div>
 
         {/* vehicle card */}
@@ -44,27 +72,27 @@ const ConfirmRidePopUp = (props) => {
             <div className="flex items-center gap-5 pb-2 border-b">
               <i className="ri-map-pin-user-fill text-lg"></i>{" "}
               <div>
-                <h3 className="text-base">24B, Near Kapoor's Cafe</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-base">{props.ride?.pickup}</h3>
+                {/* <p className="text-sm text-gray-500">
                   Sheriyans Coding School, Bhopal
-                </p>
+                </p> */}
               </div>
             </div>
             {/* destination */}
             <div className="flex items-center gap-5 pb-2 border-b">
               <i className="ri-map-pin-2-fill text-lg"></i>{" "}
               <div>
-                <h3 className="text-base">101A, Infinity Tower</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-base">{props.ride?.destination}</h3>
+                {/* <p className="text-sm text-gray-500">
                   Opposite City Park, Mumbai
-                </p>
+                </p> */}
               </div>
             </div>{" "}
             {/* payment */}
             <div className="flex items-center gap-5 pb-2 border-b">
               <i className="ri-cash-fill text-lg"></i>
               <div>
-                <h3 className="text-base">₹169.69</h3>
+                <h3 className="text-base">₹{props.ride?.fare}</h3>
                 <p className="text-sm text-gray-500">Cash</p>
               </div>
             </div>
@@ -73,9 +101,7 @@ const ConfirmRidePopUp = (props) => {
           <div className="w-full">
             <form
               className="flex flex-col items-center justify-center"
-              onSubmit={(e) => {
-                submitHandler(e);
-              }}
+              onSubmit={submitHandler}
             >
               <input
                 type="number"
@@ -87,11 +113,12 @@ const ConfirmRidePopUp = (props) => {
                 className="border rounded-lg bg-[#eeeeee] px-12 py-2 text-base w-[60%] text-center font-medium mt-3"
               />
 
-              <Link to={"/captain-riding"} className="w-full">
-                <button className="w-full mt-4 bg-black rounded-lg text-white text-base tracking-tighter px-5 py-2">
-                  Confirm Ride
-                </button>
-              </Link>
+              <button
+                type="submit"
+                className="w-full mt-4 bg-black rounded-lg text-white text-base tracking-tighter px-5 py-2"
+              >
+                Confirm Ride
+              </button>
 
               <button
                 onClick={() => {

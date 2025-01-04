@@ -13,7 +13,7 @@ const CaptainDetails = () => {
             className="h-10 w-10 rounded-full object-cover "
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdlMd7stpWUCmjpfRjUsQ72xSWikidbgaI1w&s"
           ></img>
-          <h4 className="text-base font-medium ">{captain?.fullname?.firstname + " " + captain?.fullname?.lastname}</h4>
+          <h4 className="text-base font-medium capitalize">{captain?.fullname?.firstname + " " + captain?.fullname?.lastname}</h4>
         </div>
 
         <div>
